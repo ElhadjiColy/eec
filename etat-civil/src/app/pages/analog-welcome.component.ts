@@ -153,7 +153,7 @@ export class AnalogWelcomeComponent {
     form.form.reset();
   }
 
-  public removeNote(id: number) {
+  public removeNote(id: string) {
     this._trpc.note.remove
       .mutate({ id })
       .pipe(take(1))
