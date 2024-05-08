@@ -18,3 +18,78 @@ model Note {
   note        String
   createdAt   DateTime @default(now())
 }
+
+enum Sexe {
+  M
+  F
+}
+
+enum Profession {
+  Agriculteur
+  Artisan
+  Commercant
+  Cadre
+  ProfessionLiberale
+  Employe
+  Ouvrier
+  Retraite
+  SansActivite
+  Autre
+}
+
+model Mother {
+  id                String       @id @unique @default(uuid())
+  lastName          String
+  firstName         String
+  firstName1        String?
+  firstName2        String?
+  firstName3        String?
+  firstName4        String?
+  firstName5        String?
+  birthDate         DateTime?
+  createdAt         DateTime     @default(now())
+  borned            String?
+  profession        Profession   @default(SansActivite)
+  sexe              Sexe
+
+  children          Birth[]
+}
+
+model Father {
+  id                String       @id @unique @default(uuid())
+  lastName          String
+  firstName         String
+  firstName1        String?
+  firstName2        String?
+  firstName3        String?
+  firstName4        String?
+  firstName5        String?
+  birthDate         DateTime?
+  createdAt         DateTime    @default(now())
+  borned            String?
+  profession        Profession  @default(SansActivite)
+  sexe              Sexe
+
+  children          Birth[]
+
+}
+
+model Birth {
+  id                String      @id @unique @default(uuid())
+  lastName          String
+  firstName         String
+  firstName1        String?
+  firstName2        String?
+  firstName3        String?
+  firstName4        String?
+  firstName5        String?
+  birthDate         DateTime
+  createdAt         DateTime    @default(now())
+  borned            String
+  sexe              Sexe
+
+  fatherId          String
+  motherId          String
+  father            Father      @relation(fields: [fatherId], references: [id])
+  mother            Mother      @relation(fields: [motherId], references: [id])
+}

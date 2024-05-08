@@ -6,7 +6,8 @@
     "start": "nx serve etat-civil",
     "studio": "npx prisma studio",
     "db:push": "npx prisma db push",
-    "prettier": "npx prettier --write ."
+    "prettier": "npx prettier --write .",
+    "format": "npx prisma format"
   },
   "private": true,
   "dependencies": {
