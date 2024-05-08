@@ -1,8 +1,8 @@
-import { z } from 'zod';
-import { publicProcedure, router } from '../trpc';
-import { Note } from '../../../note';
-import { prisma } from '../prisma';
-import { Prisma } from '@prisma/client';
+import { z } from "zod";
+import { publicProcedure, router } from "../trpc";
+import { Note } from "../../../note";
+import { prisma } from "../prisma";
+import { Prisma } from "@prisma/client";
 
 let noteId = 0;
 const notes: Note[] = [];
@@ -31,13 +31,12 @@ export const noteRouter = router({
         select: defaultNoteSelect,
       })
     ),
-  list: publicProcedure.query(() =>
-    {
-      /*return notes;*/
-      return prisma.note.findMany({
-        select: defaultNoteSelect,
-      });
-    }),
+  list: publicProcedure.query(() => {
+    /*return notes;*/
+    return prisma.note.findMany({
+      select: defaultNoteSelect,
+    });
+  }),
   remove: publicProcedure
     .input(
       z.object({

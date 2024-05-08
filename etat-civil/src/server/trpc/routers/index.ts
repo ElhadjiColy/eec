@@ -1,5 +1,5 @@
-import { router } from '../trpc';
-import { noteRouter } from './notes';
+import { router } from "../trpc";
+import { noteRouter } from "./notes";
 
 export const appRouter = router({
   note: noteRouter,
