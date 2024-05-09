@@ -1,0 +1,142 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+model Note {
+  id          String @id @default(uuid())
+  note        String
+  createdAt   DateTime @default(now())
+}
+
+enum Sexe {
+  M
+  F
+}
+
+// TODO: Translate to english
+enum Profession {
+  Farmer
+  Artisan
+  Commercant
+  Cadre
+  ProfessionLiberale
+  Employee
+  Ouvrier
+  Retraite
+  SansActivite
+  Autre
+}
+
+enum Declarant {
+  Father
+  Mother
+  Other
+}
+
+enum WeddingType {
+  Polygamie
+  PolygamieLimiteeA2
+  PolygamieLimiteeA3
+  Monogamie
+}
+
+enum RegimeMatrimonial {
+  CommunauteLegale
+  SeparationDeBiens
+  ParticipationAuxAcquets
+  CommunauteUniverselle
+  Autre
+}
+
+enum PersonType {
+  Father
+  Mother
+  Child
+  Husband
+  Wife
+}
+
+enum MentionsMarginaleRaison {
+  Mariage
+  Divorce
+  AdoptionSimple
+  AdoptionParLEtat                                    // Pupille de l'Etat
+  RevocationAdoption
+  ReconnaissanceEnfantNaturel
+  ChangementDePrenom
+  ChangementDeNom
+  Deces
+  Autre
+}
+
+abstract model Person {
+  id                String                              @id @unique @default(uuid())
+  lastName          String
+  firstName         String
+  firstName1        String?
+  firstName2        String?
+  firstName3        String?
+  firstName4        String?
+  firstName5        String?
+  birthDate         DateTime                            // date de naissance
+  birthPlace        String                              // lieu de naissance
+  createdAt         DateTime                            @default(now())
+  profession        Profession                          @default(SansActivite)
+  sexe              Sexe                                @default(M)
+  type              PersonType
+}
+
+// Considered like a birth certificate
+model Child extends Person {
+  fatherId          String
+  motherId          String
+  father            Father                              @relation(fields: [fatherId], references: [id])
+  mother            Mother                              @relation(fields: [motherId], references: [id])
+  declaredBy        Declarant                           @default(Father)
+  mentionsLegales   MentionsMarginaleRaison[]
+}
+
+model Mother extends Person {
+  children          Child[]
+}
+
+model Father extends Person {
+  children          Child[]
+}
+
+model Husband extends Person {
+  wifeId            String
+  wife              Wife[]
+  address           String?
+}
+
+model Wife extends Person {
+  husbandId         String                              @unique
+  husband           Husband                             @relation(fields: [husbandId], references: [id])
+  address           String?
+}
+
+model Wedding {
+  husbandId         String                              @unique
+  wifeId            String                              @unique
+  weddingDate       DateTime
+  registereddAt     DateTime                            @default(now())
+
+  weddingType       WeddingType                         @default(Polygamie)
+  regimeMatrimonial RegimeMatrimonial                   @default(CommunauteLegale)
+  mentionsLegales   MentionsMarginaleRaison[]
+
+  @@id([husbandId, wifeId])                             // composite primary key
+  @@unique([husbandId, wifeId])
+}
