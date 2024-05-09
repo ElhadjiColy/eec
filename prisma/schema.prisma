@@ -24,17 +24,55 @@ enum Sexe {
   F
 }
 
+// TODO: Translate to english
 enum Profession {
-  Agriculteur
+  Farmer
   Artisan
   Commercant
   Cadre
   ProfessionLiberale
-  Employe
+  Employee
   Ouvrier
   Retraite
   SansActivite
   Autre
+}
+
+enum Declarant {
+  Father
+  Mother
+  Other
+}
+
+enum WeddingType {
+  Polygamie
+  PolygamieLimiteeA2
+  PolygamieLimiteeA3
+  Monogamie
+}
+
+enum RegimeMatrimonial {
+  CommunauteLegale
+  SeparationDeBiens
+  ParticipationAuxAcquets
+  CommunauteUniverselle
+  Autre
+}
+
+model Person {
+  id                String       @id @unique @default(uuid())
+  lastName          String
+  firstName         String
+  firstName1        String?
+  firstName2        String?
+  firstName3        String?
+  firstName4        String?
+  firstName5        String?
+  birthDate         DateTime?
+  createdAt         DateTime     @default(now())
+  bornedAt          String?
+  profession        Profession   @default(SansActivite)
+  sexe              Sexe         @default(M)
 }
 
 model Mother {
@@ -50,7 +88,7 @@ model Mother {
   createdAt         DateTime     @default(now())
   borned            String?
   profession        Profession   @default(SansActivite)
-  sexe              Sexe
+  sexe              Sexe         @default(F)
 
   children          Birth[]
 }
@@ -68,13 +106,35 @@ model Father {
   createdAt         DateTime    @default(now())
   borned            String?
   profession        Profession  @default(SansActivite)
-  sexe              Sexe
+  sexe              Sexe        @default(M)
 
   children          Birth[]
 
 }
 
 model Birth {
+  lastName          String
+  firstName         String
+  firstName1        String?
+  firstName2        String?
+  firstName3        String?
+  firstName4        String?
+  firstName5        String?
+  birthDate         DateTime
+  createdAt         DateTime    @default(now())
+  borned            String
+  sexe              Sexe        @default(M)
+
+  fatherId          String      @unique
+  motherId          String      @unique
+  father            Father      @relation(fields: [fatherId], references: [id])
+  mother            Mother      @relation(fields: [motherId], references: [id])
+  declaredBy        Declarant   @default(Father)
+
+  @@id([fatherId, motherId])
+}
+
+model Husband {
   id                String      @id @unique @default(uuid())
   lastName          String
   firstName         String
@@ -86,10 +146,40 @@ model Birth {
   birthDate         DateTime
   createdAt         DateTime    @default(now())
   borned            String
-  sexe              Sexe
+  profession        Profession  @default(SansActivite)
+  sexe              Sexe        @default(M)
 
-  fatherId          String
-  motherId          String
-  father            Father      @relation(fields: [fatherId], references: [id])
-  mother            Mother      @relation(fields: [motherId], references: [id])
+  wifeId            String
+  wife              Wife[]
+}
+
+model Wife {
+  id                String      @id @unique @default(uuid())
+  lastName          String
+  firstName         String
+  firstName1        String?
+  firstName2        String?
+  firstName3        String?
+  firstName4        String?
+  firstName5        String?
+  birthDate         DateTime
+  registereddAt     DateTime    @default(now())
+  borned            String
+  profession        Profession  @default(SansActivite)
+  sexe              Sexe        @default(F)
+  husbandId         String      @unique
+
+  husband           Husband     @relation(fields: [husbandId], references: [id])
+}
+
+model Wedding {
+  husbandId         String            @unique
+  wifeId            String            @unique
+  weddingDate       DateTime
+  registereddAt     DateTime          @default(now())
+
+  weddingType       WeddingType       @default(Polygamie)
+  regimeMatrimonial RegimeMatrimonial @default(CommunauteLegale)
+
+  @@id([husbandId, wifeId])
 }
