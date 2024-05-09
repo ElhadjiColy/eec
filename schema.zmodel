@@ -67,7 +67,7 @@ enum PersonType {
   Wife
 }
 
-enum MentionsMarginaleRaison {
+enum MentionsMarginalesRaison {
   Mariage
   Divorce
   AdoptionSimple
@@ -104,7 +104,7 @@ model Child extends Person {
   father            Father                              @relation(fields: [fatherId], references: [id])
   mother            Mother                              @relation(fields: [motherId], references: [id])
   declaredBy        Declarant                           @default(Father)
-  mentionsLegales   MentionsMarginaleRaison[]
+  mentionsLegales   MentionsMarginalesRaison[]
 }
 
 model Mother extends Person {
@@ -135,8 +135,15 @@ model Wedding {
 
   weddingType       WeddingType                         @default(Polygamie)
   regimeMatrimonial RegimeMatrimonial                   @default(CommunauteLegale)
-  mentionsLegales   MentionsMarginaleRaison[]
+  mentionsLegales   MentionsMarginalesRaison[]
 
   @@id([husbandId, wifeId])                             // composite primary key
   @@unique([husbandId, wifeId])
+}
+
+model Death extends Person {
+  deathDate         DateTime
+  deathPlace        String
+  declaredBy        Declarant                           @default(Other)
+  mentionsLegales   MentionsMarginalesRaison[]
 }
