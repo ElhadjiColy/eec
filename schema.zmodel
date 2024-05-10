@@ -13,6 +13,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// plugin trpc {
+//   provider = '@zenstackhq/trpc'
+//   output = 'src/server/routers/generated'
+// }
+
 model Note {
   id          String @id @default(uuid())
   note        String
@@ -80,8 +85,9 @@ enum MentionsMarginalesRaison {
   Autre
 }
 
-abstract model Person {
+model Person {
   id                String                              @id @unique @default(uuid())
+  cni               String                              @unique @@index([cni])
   lastName          String
   firstName         String
   firstName1        String?
@@ -95,6 +101,8 @@ abstract model Person {
   profession        Profession                          @default(SansActivite)
   sexe              Sexe                                @default(M)
   type              PersonType
+
+  @@delegate(type)
 }
 
 // Considered like a birth certificate
@@ -116,7 +124,6 @@ model Father extends Person {
 }
 
 model Husband extends Person {
-  wifeId            String
   wife              Wife[]
   address           String?
 }

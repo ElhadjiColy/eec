@@ -51,6 +51,7 @@
     "@nx/eslint": "^18.0.0",
     "@nx/vite": "^18.0.0",
     "@nx/workspace": "18.3.4",
+    "@zenstackhq/trpc": "^2.0.3",
     "autoprefixer": "^10.4.0",
     "jsdom": "^22.1.0",
     "nx": "18.3.4",
