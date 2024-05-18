@@ -1,17 +1,12 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../trpc";
 import { prisma } from "../prisma";
-import { PersonType, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 
 const defaultBirthSelect = Prisma.validator<Prisma.ChildSelect>()({
   id: true,
-  firstName: true,
-  lastName: true,
-  sexe: true,
-  birthDate: true,
-  birthPlace: true,
-  type: true,
+  delegate_aux_person: true,
   father: true,
   mother: true,
 });
@@ -19,22 +14,14 @@ export const birthRouter = router({
   create: publicProcedure
     .input(
       z.object({
-        firstName: z.string(),
-        lastName: z.string(),
-        sexe: z.enum(["M", "F"]),
         father: z.string(),
         mother: z.string(),
-        birthDate: z.string(),
-        birthPlace: z.string(),
-        type: z.string(),
+        delegate_aux_person: z.string(),
       })
     )
     .mutation(({ input }) =>
       prisma.child.create({
         data: {
-          firstName: input.firstName,
-          lastName: input.lastName,
-          sexe: input.sexe,
           father: {
             connect: {
               id: input.father,
@@ -45,9 +32,11 @@ export const birthRouter = router({
               id: input.mother,
             },
           },
-          birthDate: input.birthDate,
-          birthPlace: input.birthPlace,
-          type: PersonType.Child,
+          delegate_aux_person: {
+            connect: {
+              id: input.delegate_aux_person,
+            },
+          },
         },
         select: defaultBirthSelect,
       })

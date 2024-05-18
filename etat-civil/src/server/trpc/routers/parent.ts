@@ -1,26 +1,16 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../trpc";
 import { prisma } from "../prisma";
-import { PersonType, Prisma, Sexe } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 
 const defaultMotherSelect = Prisma.validator<Prisma.MotherSelect>()({
   id: true,
-  firstName: true,
-  lastName: true,
-  birthDate: true,
-  birthPlace: true,
-  type: true,
   children: true,
 });
 
 const defaultFatherSelect = Prisma.validator<Prisma.FatherSelect>()({
   id: true,
-  firstName: true,
-  lastName: true,
-  birthDate: true,
-  birthPlace: true,
-  type: true,
   children: true,
 });
 
@@ -28,24 +18,20 @@ export const motherRouter = router({
   create: publicProcedure
     .input(
       z.object({
-        firstName: z.string(),
-        lastName: z.string(),
-        birthDate: z.string(),
-        birthPlace: z.string(),
         children: z.array(z.string()),
+        delegate_aux_person: z.string(),
       })
     )
     .mutation(({ input }) =>
       prisma.mother.create({
         data: {
-          firstName: input.firstName,
-          lastName: input.lastName,
-          sexe: Sexe.F,
-          birthDate: input.birthDate,
-          birthPlace: input.birthPlace,
-          type: PersonType.Mother,
           children: {
             connect: input.children.map((id) => ({ id })),
+          },
+          delegate_aux_person: {
+            connect: {
+              id: input.delegate_aux_person,
+            },
           },
         },
         select: defaultMotherSelect,
@@ -76,24 +62,20 @@ export const fatherRouter = router({
   create: publicProcedure
     .input(
       z.object({
-        firstName: z.string(),
-        lastName: z.string(),
-        birthDate: z.string(),
-        birthPlace: z.string(),
         children: z.array(z.string()),
+        delegate_aux_person: z.string(),
       })
     )
     .mutation(({ input }) =>
       prisma.father.create({
         data: {
-          firstName: input.firstName,
-          lastName: input.lastName,
-          sexe: Sexe.M,
-          birthDate: input.birthDate,
-          birthPlace: input.birthPlace,
-          type: PersonType.Father,
           children: {
             connect: input.children.map((id) => ({ id })),
+          },
+          delegate_aux_person: {
+            connect: {
+              id: input.delegate_aux_person,
+            },
           },
         },
         select: defaultFatherSelect,

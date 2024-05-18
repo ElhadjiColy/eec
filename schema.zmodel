@@ -70,6 +70,7 @@ enum PersonType {
   Child
   Husband
   Wife
+  Undefined
 }
 
 enum MentionsMarginalesRaison {
@@ -100,7 +101,10 @@ model Person {
   createdAt         DateTime                            @default(now())
   profession        Profession                          @default(SansActivite)
   sexe              Sexe                                @default(M)
-  type              PersonType
+  type              PersonType                          @default(Undefined)
+  address           String?
+  phone             String?
+  email             String?
 
   @@delegate(type)
 }
@@ -113,6 +117,7 @@ model Child extends Person {
   mother            Mother                              @relation(fields: [motherId], references: [id])
   declaredBy        Declarant                           @default(Father)
   mentionsLegales   MentionsMarginalesRaison[]
+  archived          Boolean                             @default(false)
 }
 
 model Mother extends Person {
@@ -125,32 +130,34 @@ model Father extends Person {
 
 model Husband extends Person {
   wife              Wife[]
-  address           String?
 }
 
 model Wife extends Person {
   husbandId         String                              @unique
   husband           Husband                             @relation(fields: [husbandId], references: [id])
-  address           String?
 }
 
 model Wedding {
   husbandId         String                              @unique
   wifeId            String                              @unique
   weddingDate       DateTime
-  registereddAt     DateTime                            @default(now())
+  registeredAt      DateTime                            @default(now())
+  registerNumber    Int
 
   weddingType       WeddingType                         @default(Polygamie)
   regimeMatrimonial RegimeMatrimonial                   @default(CommunauteLegale)
   mentionsLegales   MentionsMarginalesRaison[]
+  archived          Boolean                             @default(false)
 
-  @@id([husbandId, wifeId])                             // composite primary key
-  @@unique([husbandId, wifeId])
+  @@id(name: 'weddingId',[husbandId, wifeId])                             // composite primary key
 }
 
 model Death extends Person {
   deathDate         DateTime
   deathPlace        String
+  registeredAt      DateTime                            @default(now())
+  registerNumber    Int
   declaredBy        Declarant                           @default(Other)
   mentionsLegales   MentionsMarginalesRaison[]
+  archived          Boolean                             @default(false)
 }
