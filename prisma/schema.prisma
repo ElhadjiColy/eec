@@ -81,8 +81,8 @@ model Note {
 
 /// @@delegate(type)
 model Person {
-  id                   String     @id() @unique() @default(uuid())
-  cni                  String     @unique()
+  id                   String     @unique() @default(uuid())
+  cni                  String     @id() @unique()
   lastName             String
   firstName            String
   firstName1           String?
@@ -110,40 +110,40 @@ model Person {
 }
 
 model Child {
-  id                  String                     @id() @unique()
+  cni                 String                     @id() @unique()
   fatherId            String
   motherId            String
-  father              Father                     @relation(fields: [fatherId], references: [id])
-  mother              Mother                     @relation(fields: [motherId], references: [id])
+  father              Father                     @relation(fields: [fatherId], references: [cni])
+  mother              Mother                     @relation(fields: [motherId], references: [cni])
   declaredBy          Declarant                  @default(Father)
   mentionsLegales     MentionsMarginalesRaison[]
   archived            Boolean                    @default(false)
-  delegate_aux_person Person                     @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  delegate_aux_person Person                     @relation(fields: [cni], references: [cni], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Mother {
-  id                  String  @id() @unique()
+  cni                 String  @id() @unique()
   children            Child[]
-  delegate_aux_person Person  @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  delegate_aux_person Person  @relation(fields: [cni], references: [cni], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Father {
-  id                  String  @id() @unique()
+  cni                 String  @id() @unique()
   children            Child[]
-  delegate_aux_person Person  @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  delegate_aux_person Person  @relation(fields: [cni], references: [cni], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Husband {
-  id                  String @id() @unique()
+  cni                 String @id() @unique()
   wife                Wife[]
-  delegate_aux_person Person @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  delegate_aux_person Person @relation(fields: [cni], references: [cni], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Wife {
-  id                  String  @id() @unique()
+  cni                 String  @id() @unique()
   husbandId           String  @unique()
-  husband             Husband @relation(fields: [husbandId], references: [id])
-  delegate_aux_person Person  @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  husband             Husband @relation(fields: [husbandId], references: [cni])
+  delegate_aux_person Person  @relation(fields: [cni], references: [cni], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Wedding {
@@ -161,7 +161,7 @@ model Wedding {
 }
 
 model Death {
-  id                  String                     @id() @unique()
+  cni                 String                     @id() @unique()
   deathDate           DateTime
   deathPlace          String
   registeredAt        DateTime                   @default(now())
@@ -169,5 +169,5 @@ model Death {
   declaredBy          Declarant                  @default(Other)
   mentionsLegales     MentionsMarginalesRaison[]
   archived            Boolean                    @default(false)
-  delegate_aux_person Person                     @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  delegate_aux_person Person                     @relation(fields: [cni], references: [cni], onDelete: Cascade, onUpdate: Cascade)
 }

@@ -89,13 +89,17 @@ export const personRouter = router({
         select: defaultPersonSelect,
       })
     ),
-  findUnique: publicProcedure.query((cni) => {
-    return prisma.person.findUnique({
+  personByCni: publicProcedure.input(z.string()).query(async (opts) => {
+    const { input } = opts!;
+
+    console.log('input ', input)
+
+    return await prisma.person.findUnique({
       where: {
-        cni: cni.toString() // Convert cni to a string
-      },
-      select: defaultPersonSelect
+        cni: input
+      }
     });
+
   }),
   list: publicProcedure.query(() => {
     return prisma.person.findMany({
@@ -105,13 +109,13 @@ export const personRouter = router({
   remove: publicProcedure
     .input(
       z.object({
-        id: z.string(),
+        cni: z.string(),
       })
     )
     .mutation(({ input }) => {
       return prisma.person.delete({
         where: {
-          id: input.id,
+          cni: input.cni,
         },
         select: defaultPersonSelect,
       });

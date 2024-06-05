@@ -87,8 +87,8 @@ enum MentionsMarginalesRaison {
 }
 
 model Person {
-  id                String                              @id @unique @default(uuid())
-  cni               String                              @unique @@index([cni])
+  id                String                              @unique @default(uuid())
+  cni               String                              @id @unique @@index([cni])
   lastName          String
   firstName         String
   firstName1        String?
@@ -113,8 +113,8 @@ model Person {
 model Child extends Person {
   fatherId          String
   motherId          String
-  father            Father                              @relation(fields: [fatherId], references: [id])
-  mother            Mother                              @relation(fields: [motherId], references: [id])
+  father            Father                              @relation(fields: [fatherId], references: [cni])
+  mother            Mother                              @relation(fields: [motherId], references: [cni])
   declaredBy        Declarant                           @default(Father)
   mentionsLegales   MentionsMarginalesRaison[]
   archived          Boolean                             @default(false)
@@ -134,7 +134,7 @@ model Husband extends Person {
 
 model Wife extends Person {
   husbandId         String                              @unique
-  husband           Husband                             @relation(fields: [husbandId], references: [id])
+  husband           Husband                             @relation(fields: [husbandId], references: [cni])
 }
 
 model Wedding {

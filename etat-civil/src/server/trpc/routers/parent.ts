@@ -5,12 +5,12 @@ import { Prisma } from "@prisma/client";
 
 
 const defaultMotherSelect = Prisma.validator<Prisma.MotherSelect>()({
-  id: true,
+  cni: true,
   children: true,
 });
 
 const defaultFatherSelect = Prisma.validator<Prisma.FatherSelect>()({
-  id: true,
+  cni: true,
   children: true,
 });
 
@@ -26,17 +26,27 @@ export const motherRouter = router({
       prisma.mother.create({
         data: {
           children: {
-            connect: input.children.map((id) => ({ id })),
+            connect: input.children.map((cni) => ({ cni })),
           },
           delegate_aux_person: {
             connect: {
-              id: input.delegate_aux_person,
+              cni: input.delegate_aux_person,
             },
           },
         },
         select: defaultMotherSelect,
       })
     ),
+  /*getMotherByCNI: publicProcedure.query((cni) => {
+    return prisma.mother.findUnique({
+      where: {
+        delegate_aux_person: {
+          cni: cni.toString(),
+        },
+      },
+      select: defaultMotherSelect,
+    });
+    }),*/
   list: publicProcedure.query(() => {
     return prisma.mother.findMany({
       select: defaultMotherSelect,
@@ -45,13 +55,13 @@ export const motherRouter = router({
   remove: publicProcedure
     .input(
       z.object({
-        id: z.string(),
+        cni: z.string(),
       })
     )
     .mutation(({ input }) => {
       return prisma.mother.delete({
         where: {
-          id: input.id,
+          cni: input.cni,
         },
         select: defaultMotherSelect,
       });
@@ -70,11 +80,11 @@ export const fatherRouter = router({
       prisma.father.create({
         data: {
           children: {
-            connect: input.children.map((id) => ({ id })),
+            connect: input.children.map((cni) => ({ cni })),
           },
           delegate_aux_person: {
             connect: {
-              id: input.delegate_aux_person,
+              cni: input.delegate_aux_person,
             },
           },
         },
@@ -89,13 +99,13 @@ export const fatherRouter = router({
   remove: publicProcedure
     .input(
       z.object({
-        id: z.string(),
+        cni: z.string(),
       })
     )
     .mutation(({ input }) => {
       return prisma.father.delete({
         where: {
-          id: input.id,
+          cni: input.cni,
         },
         select: defaultFatherSelect,
       });

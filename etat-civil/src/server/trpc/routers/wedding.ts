@@ -21,12 +21,12 @@ export const wifeRouter = router({
         data: {
           husband: {
             connect: {
-              id: input.husbandId,
+              cni: input.husbandId,
             },
           },
           delegate_aux_person: {
             connect: {
-              id: input.delegate_aux_person,
+              cni: input.delegate_aux_person,
             },
           },
         },
@@ -41,13 +41,13 @@ export const wifeRouter = router({
   remove: publicProcedure
     .input(
       z.object({
-        id: z.string(),
+        cni: z.string(),
       })
     )
     .mutation(({ input }) => {
       return prisma.wife.delete({
         where: {
-          id: input.id,
+          cni: input.cni,
         },
         select: defaultWifeSelect,
       });
@@ -55,7 +55,7 @@ export const wifeRouter = router({
 });
 
 export const defaultHusbandSelect = Prisma.validator<Prisma.HusbandSelect>()({
-  id: true,
+  cni: true,
   wife: true,
   delegate_aux_person: true,
 });
@@ -72,11 +72,11 @@ export const husbandRouter = router({
       prisma.husband.create({
         data: {
           wife: {
-            connect: input.wife.map((id) => ({ id })),
+            connect: input.wife.map((cni) => ({ cni })),
           },
           delegate_aux_person: {
             connect: {
-              id: input.delegate_aux_person,
+              cni: input.delegate_aux_person,
             },
           },
         },
@@ -93,13 +93,13 @@ export const husbandRouter = router({
   remove: publicProcedure
     .input(
       z.object({
-        id: z.string(),
+        cni: z.string(),
       })
     )
     .mutation(({ input }) => {
       return prisma.husband.delete({
         where: {
-          id: input.id,
+          cni: input.cni,
         },
         select: defaultHusbandSelect,
       });

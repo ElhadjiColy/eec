@@ -5,7 +5,7 @@ import { Prisma } from "@prisma/client";
 
 
 const defaultBirthSelect = Prisma.validator<Prisma.ChildSelect>()({
-  id: true,
+  cni: true,
   delegate_aux_person: true,
   father: true,
   mother: true,
@@ -24,17 +24,17 @@ export const birthRouter = router({
         data: {
           father: {
             connect: {
-              id: input.father,
+              cni: input.father,
             },
           },
           mother: {
             connect: {
-              id: input.mother,
+              cni: input.mother,
             },
           },
           delegate_aux_person: {
             connect: {
-              id: input.delegate_aux_person,
+              cni: input.delegate_aux_person,
             },
           },
         },
@@ -49,13 +49,13 @@ export const birthRouter = router({
   remove: publicProcedure
     .input(
       z.object({
-        id: z.string(),
+        cni: z.string(),
       })
     )
     .mutation(({ input }) => {
       return prisma.child.delete({
         where: {
-          id: input.id,
+          cni: input.cni,
         },
         select: defaultBirthSelect,
       });
